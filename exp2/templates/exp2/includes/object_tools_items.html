@@ -1,0 +1,23 @@
+{% load admin_urls i18n %}
+    <li>
+        {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+        <a href="{% add_preserved_filters history_url %}" class="historylink">{% trans "History" %}</a>
+    </li>
+    {% if is_clonable %}
+    <li>
+      {% url opts|admin_urlname:'clone' original.pk|admin_urlquote as clone_url %}
+      <a class="historylink"
+         href="clone/">
+        {% trans "Clone"%}
+      </a>
+    </li>
+    {% endif %}
+    {% if is_deployable %}
+    <li>
+      <a class="historylink"
+         href="deploy/">
+        {% trans "Deploy"%}
+      </a>
+    </li>
+    {% endif %}
+    {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif %}

@@ -1,0 +1,28 @@
+{% extends "admin/exp2/change_form.html" %}
+{% load i18n admin_urls admin_static admin_modify hier_models_tags %}
+
+{% comment %}
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+{% endcomment %}
+
+{% block bulk_admin_forms %}
+
+  <div class="module bulk-admin-form">
+    <h2>Miscelaneous Participant Actions</h2>
+      <form action="{% url 'experiments:detach-participant-from-user' participant_id=original.pk %}"
+        method="POST">
+        {% csrf_token %}
+        <input type="submit"
+               value="Detach Participant from User account"
+               name="_detach_part_from_user"
+               {% if not original.user %}disabled{% endif %} />
+      </form>
+  </div>
+
+{% endblock bulk_admin_forms %}

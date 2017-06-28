@@ -1,0 +1,89 @@
+{% load i18n admin_urls admin_static admin_list admin_modify  %}
+
+<div class="_inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
+  <div class="tabular inline-related {% if forloop.last %}last-related{% endif %}">
+    {{ inline_admin_formset.formset.management_form }}
+    <fieldset class="module">
+      <h2>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h2>
+
+      {% with inline_admin_formset.formset.cl as cl %}
+        {% if cl.paginator %}
+          {% pagination cl %}
+        {% endif %}
+      {% endwith %}
+
+      <table>
+        <tr>
+          <td>
+            <ul class="inline-list inline-list-4">
+            {% for inline_admin_form in inline_admin_formset %}
+              <li class=" {% if inline_admin_form.original or inline_admin_form.show_url %}has_original{% endif %}{% if forloop.last %} empty-form{% endif %}"
+                  id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+
+                {# show change link #}
+                {% if inline_admin_form.original or inline_admin_form.show_url %}
+                  {% if inline_admin_form.original %}
+                    {{ inline_admin_form.original }}
+                    {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}
+                      <a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}"
+                         class="inlinechangelink">
+                        {% trans "Change" %}
+                      </a>
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+
+                {# primary and foreign key fields #}
+                {% if inline_admin_form.needs_explicit_pk_field %}
+                  {{ inline_admin_form.pk_field.field }}
+                {% endif %}
+
+                {{ inline_admin_form.fk_field.field }}
+
+                {# hidden fields #}
+                {% spaceless %}
+                {% for fieldset in inline_admin_form %}
+                  {% for line in fieldset %}
+                    {% for field in line %}
+                      {% if field.field.is_hidden %}
+                        {{ field.field }}
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+                {% endspaceless %}
+
+                {# non-hidden fields #}
+                {% for fieldset in inline_admin_form %}
+                  {% for line in fieldset %}
+                    {% for field in line %}
+                      {% if not field.field.is_hidden %}
+                          <span>{{ field.contents }}</span>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+
+              </li>
+             {% endfor %}
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+  </div>
+</div>
+
+{% comment %}
+<script type="text/javascript">
+
+(function($) {
+  $("#{{ inline_admin_formset.formset.prefix }}-group .tabular.inline-related tbody tr").tabularFormset({
+    prefix: "{{ inline_admin_formset.formset.prefix }}",
+    adminStaticPrefix: '{% static "admin/" %}',
+    addText: "{% blocktrans with inline_admin_formset.opts.verbose_name|capfirst as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}",
+    deleteText: "{% trans 'Remove' %}"
+  });
+})(django.jQuery);
+</script>
+{% endcomment %}

@@ -1,0 +1,70 @@
+{% extends "admin/exp2/change_form.html" %}
+{% load i18n admin_urls admin_static admin_modify hier_models_tags %}
+
+{% comment %}
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+{% endblock %}
+{% endcomment %}
+
+{% block bulk_admin_forms %}
+
+  <div class="module bulk-admin-form">
+      <form action="{% url 'experiments:bulk-add-change-participants' section_id=original.pk %}"
+        method="POST">
+      {% csrf_token %}
+        <h2>Bulk Create/Update Participants</h2>
+
+      {{ bulk_add_change_form.non_field_errors }}
+      <span class="fieldWrapper">
+          {{ bulk_add_change_form.first_uid.errors}}
+          {{ bulk_add_change_form.first_uid.label_tag }}
+          {{ bulk_add_change_form.first_uid }}
+      </span>
+      <span class="fieldWrapper">
+          {{ bulk_add_change_form.last_uid.errors}}
+          {{ bulk_add_change_form.last_uid.label_tag}}
+          {{ bulk_add_change_form.last_uid }}
+      </span>
+      <span class="fieldWrapper">
+          {{ bulk_add_change_form.action.errors }}
+          {{ bulk_add_change_form.action.label_tag }}
+          {{ bulk_add_change_form.action }}
+      </span>
+      <fieldset style="border: 0;">
+          <legend>
+              Select conditions and specify the order you wish to map them across participants
+          </legend>
+          {{ bulk_add_change_form.conditions.errors }}
+          {{ bulk_add_change_form.conditions }}
+      </fieldset>
+      <input type="submit" value="Create or Update" name="_create_update_parts" />
+    </form>
+  </div>
+
+  <div class="module bulk-admin-form">
+    <form action="{% url 'experiments:bulk-delete-participants' section_id=original.pk %}"
+        method="POST">
+      {% csrf_token %}
+      <fieldset>
+      <h2>Bulk Delete Participants</h2>
+        {{ bulk_delete_form.non_field_errors }}
+        <span class="fieldWrapper">
+            {{ bulk_delete_form.first_uid.errors }}
+            {{ bulk_delete_form.first_uid.label_tag}}
+            {{ bulk_delete_form.first_uid }}
+        </span>
+        <span class="fieldWrapper">
+            {{ bulk_delete_form.last_uid.errors }}
+            {{ bulk_delete_form.last_uid.label_tag }}
+            {{ bulk_delete_form.last_uid }}
+        </span>
+        <input type="submit" value="Delete" name="_deleteparts"/>
+      </fieldset>
+    </form>
+  </div>
+{% endblock bulk_admin_forms %}
